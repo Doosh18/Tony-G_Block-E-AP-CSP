@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page 1</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav>
+        <style>
+            .one{
+                border: 3px solid black;
+                font-size: 20px;
+                padding: 10px;
+                display: inline-block;
+            }
+        </style>
+        <div id="idxpg">
+        <ul>
+        <p class = "one"><a href="homepage.html">Home</a><br></p>
+        <p class = "one"><a href="page1.html">Page 1</a><br></p>
+        <p class = "one"><a href="page2.html">Page 2</a><br></p>
+        <p class = "one"><a href="page3.html">Page 3</a><br></p>
+        <p class = "one"><a href="https://www.theartofcoachingvolleyball.com/basic-volleyball-rules-and-terminology/">For more info!:</a><br></p>
+        </ul>
+    </div>
+    </nav>
+    <body>
+        <div id="idxpg">
+        <h2>Page 3</h2>
+        <h3>Drills and Practice!</h3>
+        <li>Skill Drills: Incorporate skill-specific drills into your practice routine to focus on areas that need improvement, such as serving accuracy, passing consistency, or hitting technique.</li>
+        <li>Game Simulations: Simulate game scenarios during practice to enhance decision-making, spatial awareness, and situational awareness on the court.</li>
+        <li>Conditioning: Volleyball is a physically demanding sport, so prioritize fitness and conditioning exercises to improve agility, speed, strength, and endurance.</li>
+        <li>Specific Situation Drills: As volleyball is a sport where many complicated situations may occur, specific situation drills to improve an athletes general level of preparedness when faced with a difficult situation is beneficial</li> <br>
+        <img src="images/volleyballdrill.gif" alt="Attacking"width="150"
+        height="200" />
+        <img src="images/volleyballdrill1.gif" alt="Attacking"width="300"
+        height="200" />
+        <img src="images/volleyballdrill2.gif" alt="Attacking"width="300"
+        height="200" />
+        </div>
+    </body>
+</body>
+</html>
