@@ -1,0 +1,64 @@
+import React, { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import Papa from "papaparse";
+
+export default function VolunteerFinder() {
+  const [opportunities, setOpportunities] = useState([]);
+  const [location, setLocation] = useState("New York");
+  const [filteredOpportunities, setFilteredOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCSV = async () => {
+      const response = await fetch("/AmeriCorps_NCCC_Deployments_New_20250519.csv");
+      const csvText = await response.text();
+      const { data } = Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+      });
+      setOpportunities(data);
+      setLoading(false);
+    };
+    fetchCSV();
+  }, []);
+
+  useEffect(() => {
+    const filtered = opportunities.filter((opp) =>
+      opp.State?.toLowerCase().includes(location.toLowerCase()) ||
+      opp.City?.toLowerCase().includes(location.toLowerCase())
+    );
+    setFilteredOpportunities(filtered);
+  }, [location, opportunities]);
+
+  return (
+    <div className="p-8 space-y-6">
+      <h1 className="text-3xl font-bold text-center">AmeriCorps Volunteer Opportunities</h1>
+      <div className="flex gap-4 items-end">
+        <div className="flex-1">
+          <label className="text-sm font-medium">Search by City or State</label>
+          <Input
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="e.g., Denver or CO"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
+        {loading ? (
+          <p className="col-span-full text-center text-gray-500">Loading opportunities...</p>
+        ) : filteredOpportunities.length > 0 ? (
+          filteredOpportunities.map((opp, index) => (
+            <Card key={index} className="rounded-2xl shadow-md">
+              <CardContent className="p-4 space-y-2">
+                <h2 className="text-xl font-semibold">{opp.Project_Name || "Unnamed Project"}</h2>
+                <p className="text-sm text-gray-600">{opp.Sponsor || "Unknown Sponsor"}</p>
+                <p className="text-sm">{opp.City}, {opp.State}</p>
+                <p className="text-sm text-gray-700">{opp.Description || "No description available."}</p>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <p className="col-span-full text-center text-gray-500">No opportunities found in this location.</p>
