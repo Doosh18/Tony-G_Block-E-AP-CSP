@@ -41,7 +41,7 @@ export default function VolunteerFinder() {
           <Input
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g., Denver or CO"
+            placeholder="California"
           />
         </div>
       </div>
@@ -53,8 +53,8 @@ export default function VolunteerFinder() {
           filteredOpportunities.map((opp, index) => (
             <Card key={index} className="rounded-2xl shadow-md">
               <CardContent className="p-4 space-y-2">
-                <h2 className="text-xl font-semibold">{opp.Project_Name || "Unnamed Project"}</h2>
-                <p className="text-sm text-gray-600">{opp.Sponsor || "Unknown Sponsor"}</p>
+                <h2 className="text-xl font-semibold">{opp["Project Name"] || "Unnamed Project"}</h2>
+                <p className="text-sm text-gray-600">{opp["Project Sponsor"] || "Unknown Sponsor"}</p>
                 <p className="text-sm">{opp.City}, {opp.State}</p>
                 <p className="text-sm text-gray-700">{opp.Description || "No description available."}</p>
               </CardContent>
@@ -62,3 +62,8 @@ export default function VolunteerFinder() {
           ))
         ) : (
           <p className="col-span-full text-center text-gray-500">No opportunities found in this location.</p>
+        )}
+      </div>
+    </div>
+  );
+}
