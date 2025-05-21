@@ -1,0 +1,69 @@
+import csv
+import math
+from pgeocode import Nominatim
+
+def haversine(lat1, lon1, lat2, lon2):
+    R = 3958.8  # Radius of Earth in miles
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+
+    a = math.sin(dphi/2)**2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    return R * c
+
+def load_opportunities(csv_path):
+    with open(csv_path, newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        return list(reader)
+
+def get_zip_coordinates(zip_code, country='US'):
+    nomi = Nominatim(country)
+    location = nomi.query_postal_code(zip_code)
+    if location is None or math.isnan(location.latitude) or math.isnan(location.longitude):
+        return None, None
+    return location.latitude, location.longitude
+
+def estimate_city_coordinates(city, state, nomi):
+    postal_codes = nomi.query_postal_code(nomi.query_location(city + ", " + state))
+    if postal_codes is None or math.isnan(postal_codes.latitude):
+        return None, None
+    return postal_codes.latitude, postal_codes.longitude
+
+def filter_by_zip_distance(opportunities, center_zip, radius_miles):
+    center_lat, center_lon = get_zip_coordinates(center_zip)
+    if center_lat is None:
+        print("Invalid ZIP code.")
+        return []
+
+    nomi = Nominatim('US')
+    filtered = []
+    for opp in opportunities:
+        city = opp.get("City", "")
+        state = opp.get("State", "")
+        lat, lon = estimate_city_coordinates(city, state, nomi)
+        if lat is None:
+            continue
+        distance = haversine(center_lat, center_lon, lat, lon)
+        if distance <= radius_miles:
+            opp['Distance (miles)'] = round(distance, 1)
+            filtered.append(opp)
+    return sorted(filtered, key=lambda x: x['Distance (miles)'])
+
+def display_opportunities(opps):
+    for opp in opps:
+        print(f" {opp.get('Project Name', 'Unnamed')}")
+        print(f" {opp.get('City')}, {opp.get('State')} — {opp['Distance (miles)']} mi")
+        print(f" Sponsor: {opp.get('Project Sponsor', 'N/A')}")
+        print(f" {opp.get('Description', 'No description')[:200]}...")
+        print("-" * 60)
+
+if __name__ == "__main__":
+    path = "AmeriCorps_NCCC_Deployments_New_20250519.csv"
+    zip_code = input("Enter your ZIP code: ")
+    radius = float(input("Enter search radius in miles (ex. 50): "))
+
+    all_opps = load_opportunities(path)
+    nearby_opps = filter_by_zip_distance(all_opps, zip_code, radius)
+    display_opportunities(nearby_opps)
